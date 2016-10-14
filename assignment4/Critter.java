@@ -180,5 +180,6 @@ public abstract class Critter {
 	public static void worldTimeStep() {
 	}
 	
-	public static void displayWorld() {}
+	public static void displayWorld() {
+	}
 }
