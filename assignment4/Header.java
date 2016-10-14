@@ -6,7 +6,7 @@ package assignment4;
  * pac2472
  * 16450
  * Mina Sucur
- * <Student2 EID>
+ * ms64973
  * 16450
  * Slip days used: <0>
  * Fall 2016
