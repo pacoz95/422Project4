@@ -50,6 +50,7 @@ public abstract class Critter {
 	private int y_coord;
 	
 	protected final void walk(int direction) {
+		
 	}
 	
 	protected final void run(int direction) {
@@ -73,6 +74,7 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+		//create the critter, catch exceptions
 		Critter newCritter;
 		try {
 			newCritter = (Critter) Class.forName(critter_class_name).newInstance();
@@ -81,8 +83,17 @@ public abstract class Critter {
 			throw new InvalidCritterException(critter_class_name + " does not exist.");
 		}
 		if (!(newCritter instanceof Critter)){
-			throw new InvalidCritterException(critter_class_name + " is not a subclass of critter.");
+			throw new InvalidCritterException(critter_class_name + " is not a Critter.");
 		}
+		
+		//set coordinates
+		newCritter.x_coord = getRandomInt(Params.world_width);
+		newCritter.y_coord = getRandomInt(Params.world_height);
+		//set energy
+		newCritter.energy = Params.start_energy;
+		//add to world
+		CritterWorld.critterCollection.add(newCritter);
+		CritterWorld.world[newCritter.x_coord][newCritter.y_coord] = newCritter;
 	}
 	
 	/**
