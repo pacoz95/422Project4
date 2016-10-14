@@ -73,14 +73,16 @@ public abstract class Critter {
 	 * @throws InvalidCritterException
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
+		Critter newCritter;
 		try {
-			Critter newCritter = (Critter) Class.forName(critter_class_name).newInstance();
+			newCritter = (Critter) Class.forName(critter_class_name).newInstance();
 		}
-		catch (ClassNotFoundException e) {
+		catch (Exception e) {
 			throw new InvalidCritterException(critter_class_name + " does not exist.");
 		}
-		if (!(newCritter instanceof Critter))
+		if (!(newCritter instanceof Critter)){
 			throw new InvalidCritterException(critter_class_name + " is not a subclass of critter.");
+		}
 	}
 	
 	/**
