@@ -83,6 +83,7 @@ public abstract class Critter {
 		if (!(newCritter instanceof Critter)){
 			throw new InvalidCritterException(critter_class_name + " is not a subclass of critter.");
 		}
+		
 	}
 	
 	/**
