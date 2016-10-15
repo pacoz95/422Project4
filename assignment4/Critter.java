@@ -68,7 +68,16 @@ public abstract class Critter {
 		case 7: x_coord++; y_coord++;
 			break;
 		}
+		if(x_coord < 0){
+			x_coord = Params.world_width - 1;
+		}
+		if(y_coord < 0){
+			y_coord = Params.world_height - 1;
+		}
+		x_coord %= Params.world_width;
+		y_coord %= Params.world_height;
 		energy -= Params.walk_energy_cost;
+		
 	}
 	
 	protected final void run(int direction) {
@@ -90,6 +99,16 @@ public abstract class Critter {
 		case 7: x_coord+=2; y_coord+=2;
 			break;
 		}
+		if(x_coord < 0){
+			x_coord = Params.world_width + x_coord;
+		}
+		if(y_coord < 0){
+			y_coord = Params.world_height + y_coord;
+		}
+		
+		x_coord %= Params.world_width;
+		y_coord %= Params.world_height;
+		
 		energy -= Params.run_energy_cost;
 	}
 	
