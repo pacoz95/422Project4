@@ -24,7 +24,7 @@ public abstract class Critter {
 	private static String myPackage;
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
-
+	private static Critter[][] world = new Critter[Params.world_width][Params.world_height];
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
@@ -50,11 +50,47 @@ public abstract class Critter {
 	private int y_coord;
 	
 	protected final void walk(int direction) {
-		
+		switch (direction){
+		case 0: x_coord++;
+			break;
+		case 1: x_coord++; y_coord--;
+			break;
+		case 2: y_coord--;
+			break;
+		case 3: x_coord--; y_coord--;
+			break;
+		case 4: x_coord--;
+			break;
+		case 5: x_coord--; y_coord++;
+			break;
+		case 6: y_coord++;
+			break;
+		case 7: x_coord++; y_coord++;
+			break;
+		}
+		energy -= Params.walk_energy_cost;
 	}
 	
 	protected final void run(int direction) {
-		
+		switch (direction){
+		case 0: x_coord+=2;
+			break;
+		case 1: x_coord+=2; y_coord-=2;
+			break;
+		case 2: y_coord-=2;
+			break;
+		case 3: x_coord-=2; y_coord-=2;
+			break;
+		case 4: x_coord-=2;
+			break;
+		case 5: x_coord-=2; y_coord+=2;
+			break;
+		case 6: y_coord+=2;
+			break;
+		case 7: x_coord+=2; y_coord+=2;
+			break;
+		}
+		energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
@@ -91,8 +127,9 @@ public abstract class Critter {
 		//set energy
 		newCritter.energy = Params.start_energy;
 		//add to world
-		CritterWorld.critterCollection.add(newCritter);
-		CritterWorld.world[newCritter.x_coord][newCritter.y_coord] = newCritter;
+		population.add(newCritter);
+		//world is updated each timestep
+		//world[newCritter.x_coord][newCritter.y_coord] = newCritter;
 	}
 	
 	/**
@@ -190,6 +227,10 @@ public abstract class Critter {
 	}
 	
 	public static void worldTimeStep() {
+		//TODO all doTimeStep
+		//TODO update world/remove dead/resolve conflicts
+		//TODO add babies to population
+		//TODO update world(not babies)/remove dead critters
 	}
 	
 	public static void displayWorld() {
