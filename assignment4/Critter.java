@@ -219,10 +219,11 @@ public abstract class Critter {
 		}
 		
 
-		/*
+		/**
 		 * This method getPopulation has to be modified by you if you are not using the population
 		 * ArrayList that has been provided in the starter code.  In any case, it has to be
 		 * implemented for grading tests to work.
+		 * @return list of critters
 		 */
 		protected static List<Critter> getPopulation() {
 			return population;
@@ -241,17 +242,78 @@ public abstract class Critter {
 
 	/**
 	 * Clear the world of all critters, dead and alive
+	 * @param none
+	 * @return none
 	 */
 	public static void clearWorld() {
+		babies.clear();
+		population.clear();
+		for(int x = 0; x < Params.world_width; ++x){
+			for(int y = 0; y < Params.world_height; ++y){
+				world[x][y] = null;
+			}
+		}
 	}
-	
+	/** 
+	 * doEncounters
+	 * using population, utilizes the world grid to resolve all encounters
+	 * modifies the world grid in a way that does not break the rules
+	 * @param none
+	 * @return none
+	 */
+	private static void doEncounters(){
+		
+	}
 	public static void worldTimeStep() {
-		//TODO all doTimeStep
-		//TODO update world/remove dead/resolve conflicts
-		//TODO add babies to population
-		//TODO update world(not babies)/remove dead critters
+		//all doTimeStep
+		for(int i = 0; i < population.size(); ++i){
+			population.get(i).doTimeStep();
+		}
+		//TODO do encounters
+		//update rest energy
+		for(int i = 0; i < population.size(); ++i){
+			population.get(i).energy -= Params.rest_energy_cost;
+		}
+		//TODO generate algae
+		//TODO move babies to population
+		//TODO clear babies storage
+		//TODO update world grid (clear the dead)
 	}
 	
+	/** 
+	 * displayWorld
+	 * a rudimentary display of the critter world
+	 * prints to stdout
+	 * requires that world grid is updated
+	 * @param none
+	 * @return none
+	 */
 	public static void displayWorld() {
+		//top row
+		System.out.print('+');
+		for(int x = 0; x < Params.world_width; ++x){
+			System.out.print('-');
+		}
+		System.out.println('+');
+		
+		//body
+		for(int y = 0; y < Params.world_height; ++y){
+			System.out.print('|');
+			for(int x = 0; x < Params.world_width; ++x){
+				if(world[x][y] == null){
+					System.out.print(' ');
+				}
+				else{
+					System.out.print(world[x][y].toString());
+				}
+			}
+			System.out.println('|');
+		}
+		//bottom row
+		System.out.print('+');
+		for(int x = 0; x < Params.world_width; ++x){
+			System.out.print('-');
+		}
+		System.out.println('+');
 	}
 }
