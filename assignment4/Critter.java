@@ -113,6 +113,21 @@ public abstract class Critter {
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
+		//Check if parents has minimum reproduce energy
+		if (this.energy < Params.min_reproduce_energy) {
+			return;
+		}
+		//Reassign parent and child energy
+		offspring.energy = this.energy/2;
+		this.energy = (this.energy+1)/2;
+		//Set x and y coordinates and call walk
+		offspring.x_coord = this.x_coord;
+		offspring.y_coord = this.y_coord;
+		offspring.walk(direction);
+		//PUT WALK ENERGY BACK!!
+		offspring.energy += Params.walk_energy_cost;
+		//Add offspring to babies
+		babies.add(offspring);
 	}
 
 	public abstract void doTimeStep();
@@ -285,10 +300,16 @@ public abstract class Critter {
 		for(int i = 0; i < population.size(); ++i){
 			population.get(i).energy -= Params.rest_energy_cost;
 		}
-		//TODO generate algae
-		//TODO move babies to population
-		//TODO clear babies storage
-		//TODO update world grid (clear the dead)
+		//Add algae
+		addAlgae();
+		//Add babies to population
+		for (int i = 0; i < babies.size(); i++) {
+			population.add(babies.get(i));
+		}
+		//Clear all babies
+		babies.clear();
+		//Update the world grid
+		updateWorldGrid();
 	}
 	
 	/** 
@@ -326,5 +347,29 @@ public abstract class Critter {
 			System.out.print('-');
 		}
 		System.out.println('+');
+	}
+	
+	private static void addAlgae() {
+		for (int i=0; i<=Params.refresh_algae_count; i++) {
+			try {
+				makeCritter("Algae");
+			}
+			catch (InvalidCritterException e) {
+				System.out.println("Cannot add Algae.");
+			}
+		}
+	}
+	
+	private static void updateWorldGrid() {
+		//Remove dead critters from population
+		for (int i = 0; i < population.size(); i++) {
+			if (population.get(i).energy <= 0)
+				population.remove(i);
+		}
+		//Update world array with new positions
+		clearWorldGrid();
+		for (int i = 0; i < population.size(); i++) {
+			world[population.get(i).x_coord][population.get(i).y_coord] = population.get(i);
+		}
 	}
 }
