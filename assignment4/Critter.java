@@ -130,6 +130,7 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
 		//create the critter, catch exceptions
+		//TODO append the class name
 		Critter newCritter;
 		try {
 			newCritter = (Critter) Class.forName(critter_class_name).newInstance();
@@ -248,6 +249,16 @@ public abstract class Critter {
 	public static void clearWorld() {
 		babies.clear();
 		population.clear();
+		clearWorldGrid();
+	}
+	
+	/**
+	 * Clear the world grid of all critters, dead and alive
+	 * Useful for repopulating the world grid
+	 * @param none
+	 * @return none
+	 */
+	private static void clearWorldGrid() {
 		for(int x = 0; x < Params.world_width; ++x){
 			for(int y = 0; y < Params.world_height; ++y){
 				world[x][y] = null;
