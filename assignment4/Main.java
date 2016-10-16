@@ -13,6 +13,7 @@ package assignment4; // cannot be in default package
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
+import java.lang.reflect.Method;
 /*
  * Usage: java <pkgname>.Main <input file> test
  * input file is optional.  If input file is specified, the word 'test' is optional.
@@ -225,6 +226,19 @@ public class Main {
      * @return 0 if parse worked, 1 if there was a problem
      */
     private static int handleStats(String[] cmd){
+    	if(cmd.length == 2){
+    		try{
+    			Critter.getInstances(cmd[1]);
+    			Method meth =  Class.forName(myPackage + "." + cmd[1]).getMethod("runStats", String.class);
+    			meth.invoke(null, "DontCare");
+    		}
+    		catch(Exception e){
+    			return 1;
+    		}
+    	}
+    	else{
+    		return 1;
+    	}
     	return 0;
     }
     
