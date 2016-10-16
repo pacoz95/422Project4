@@ -130,12 +130,11 @@ public abstract class Critter {
 	 */
 	public static void makeCritter(String critter_class_name) throws InvalidCritterException {
 		//create the critter, catch exceptions
-		//TODO append the class name
 		Critter newCritter;
 		try {
-			newCritter = (Critter) Class.forName(critter_class_name).newInstance();
+			newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance();
 		}
-		catch (Exception e) {
+		catch (Throwable e) {
 			throw new InvalidCritterException(critter_class_name + " does not exist.");
 		}
 		if (!(newCritter instanceof Critter)) {
@@ -160,7 +159,7 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-	
+	//TODO implement this function
 		return result;
 	}
 	
@@ -273,7 +272,68 @@ public abstract class Critter {
 	 * @return none
 	 */
 	private static void doEncounters(){
-		
+		clearWorldGrid(); //start fresh
+		for(int i = 0; i < population.size(); ++i){
+			Critter critter1 = population.get(i);
+			if(critter1.energy <= 0){
+				population.remove(i);
+				continue;
+			}
+			int x = critter1.x_coord;
+			int y = critter1.y_coord;
+			if(world[x][y] == null || world[x][y].energy == 0){	//no encounter
+				world[x][y] = critter1;
+			}
+			else{	//already occupied
+				Critter critter2 = world[x][y];
+				boolean is1Fight = critter1.fight(critter2.toString());
+				boolean is2Fight = critter2.fight(critter1.toString());
+				//check if they ran
+				
+				//correct for if they ran to the same position
+				if(critter2.x_coord != x || critter2.y_coord != y){
+					//critter2 ran, it gets the new location, critter1 cannot run there
+					if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
+						critter1.x_coord = x;
+						critter1.y_coord = y;
+					}
+				}
+				//if they're still in the same position, see how they fight
+				if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
+					int diceRoll1;
+					int diceRoll2;
+					
+					if(!is1Fight){
+						diceRoll1 = 0;
+					}
+					else{
+						diceRoll1 = getRandomInt(critter1.energy); //TODO edit appropriately based on piazza response
+					}
+					if(!is2Fight){
+						diceRoll2 = 0;
+					}
+					else{
+						diceRoll2 = getRandomInt(critter2.energy); //TODO edit appropriately based on Piazza response
+					}
+					
+					//FIGHT!
+					if(diceRoll1 > diceRoll2){
+						critter1.energy = critter2.energy / 2;
+						critter2.energy = 0;
+					}
+					else{
+						critter2.energy = critter1.energy / 2;
+						critter1.energy = 0;
+					}	
+				}
+				if(critter1.energy > 0){
+					world[critter1.x_coord][critter1.y_coord] = critter1;
+				}
+				if(critter2.energy > 0){
+					world[critter2.x_coord][critter2.y_coord] = critter2;
+				}
+			}
+		}
 	}
 	public static void worldTimeStep() {
 		//all doTimeStep
@@ -281,6 +341,7 @@ public abstract class Critter {
 			population.get(i).doTimeStep();
 		}
 		//TODO do encounters
+		doEncounters();
 		//update rest energy
 		for(int i = 0; i < population.size(); ++i){
 			population.get(i).energy -= Params.rest_energy_cost;

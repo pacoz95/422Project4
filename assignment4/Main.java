@@ -189,12 +189,34 @@ public class Main {
     	}
     	return 0;
     }
-    /**TODO
+    /**
      * handles the make command,assumes the first argument is make
      * @param cmd the string for the entire command that was given (including make)
      * @return 0 if parse worked, 1 if there was a problem
      */
     private static int handleMake(String[] cmd){
+    	if(cmd.length == 2){
+    		try{
+    			Critter.makeCritter(cmd[1]);
+    		}
+    		catch(Exception e){
+    			return 1;
+    		}
+    	}
+    	else if (cmd.length == 3){
+    		try{
+    			int numTimes = Integer.parseInt(cmd[2]);
+    			for(int i = 0; i < numTimes; ++i){
+    				Critter.makeCritter(cmd[1]);
+    			}
+    		}
+    		catch(Exception e){
+    			return 1;
+    		}
+    	}
+    	else{
+    		return 1;
+    	}
     	return 0;
     }
     /**TODO
