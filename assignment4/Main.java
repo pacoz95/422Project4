@@ -230,9 +230,10 @@ public class Main {
     		try{
     			Critter.getInstances(cmd[1]);
     			Method meth =  Class.forName(myPackage + "." + cmd[1]).getMethod("runStats", String.class);
-    			meth.invoke(null, "DontCare");
+    			meth.invoke(null, Critter.getInstances(cmd[1]));
     		}
     		catch(Exception e){
+    			e.printStackTrace();
     			return 1;
     		}
     	}
