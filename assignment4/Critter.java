@@ -411,7 +411,7 @@ public abstract class Critter {
 	}
 	
 	private static void addAlgae() {
-		for (int i=0; i<=Params.refresh_algae_count; i++) {
+		for (int i=0; i<Params.refresh_algae_count; i++) {
 			try {
 				makeCritter("Algae");
 			}
