@@ -79,15 +79,15 @@ public class Main {
         	else if(cmd[0].equals("quit")){
         		status = handleQuit(cmd);
         	}
-        	//TODO show
+        	// show
         	else if(cmd[0].equals("show")){
         		status = handleShow(cmd);
         	}
-        	//TODO step (or step <count>)
+        	// step (or step <count>)
         	else if(cmd[0].equals("step")){
         		status = handleStep(cmd);
         	}
-        	//TODO seed
+        	// seed
         	else if(cmd[0].equals("seed")){
         		status = handleSeed(cmd);
         	}
