@@ -287,6 +287,7 @@ public abstract class Critter {
 	 * @return none
 	 */
 	private static void doEncounters(){
+		
 		clearWorldGrid(); //start fresh
 		for(int i = 0; i < population.size(); ++i){
 			Critter critter1 = population.get(i);
@@ -306,7 +307,7 @@ public abstract class Critter {
 				//check if they ran
 				
 				//correct for if they ran to the same position
-				if(critter2.x_coord != x || critter2.y_coord != y){
+				if(critter2.x_coord != x || critter2.y_coord != y){ //TODO, fix bug caused by clearing grid
 					//critter2 ran, it gets the new location, critter1 cannot run there
 					if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
 						critter1.x_coord = x;
@@ -322,22 +323,22 @@ public abstract class Critter {
 						diceRoll1 = 0;
 					}
 					else{
-						diceRoll1 = getRandomInt(critter1.energy); //TODO edit appropriately based on piazza response
+						diceRoll1 = getRandomInt(critter1.energy + 1);
 					}
 					if(!is2Fight){
 						diceRoll2 = 0;
 					}
 					else{
-						diceRoll2 = getRandomInt(critter2.energy); //TODO edit appropriately based on Piazza response
+						diceRoll2 = getRandomInt(critter2.energy + 1);
 					}
 					
 					//FIGHT!
 					if(diceRoll1 > diceRoll2){
-						critter1.energy = critter2.energy / 2;
+						critter1.energy += critter2.energy / 2;
 						critter2.energy = 0;
 					}
 					else{
-						critter2.energy = critter1.energy / 2;
+						critter2.energy += critter1.energy / 2;
 						critter1.energy = 0;
 					}	
 				}
@@ -350,12 +351,14 @@ public abstract class Critter {
 			}
 		}
 	}
+	
+	
 	public static void worldTimeStep() {
 		//all doTimeStep
 		for(int i = 0; i < population.size(); ++i){
 			population.get(i).doTimeStep();
 		}
-		//TODO do encounters
+		//do encounters
 		doEncounters();
 		//update rest energy
 		for(int i = 0; i < population.size(); ++i){
