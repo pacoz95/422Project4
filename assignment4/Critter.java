@@ -322,13 +322,13 @@ public abstract class Critter {
 						diceRoll1 = 0;
 					}
 					else{
-						diceRoll1 = getRandomInt(critter1.energy); //TODO edit appropriately based on piazza response
+						diceRoll1 = getRandomInt(critter1.energy + 1);
 					}
 					if(!is2Fight){
 						diceRoll2 = 0;
 					}
 					else{
-						diceRoll2 = getRandomInt(critter2.energy); //TODO edit appropriately based on Piazza response
+						diceRoll2 = getRandomInt(critter2.energy + 1);
 					}
 					
 					//FIGHT!
@@ -350,6 +350,8 @@ public abstract class Critter {
 			}
 		}
 	}
+	
+	
 	public static void worldTimeStep() {
 		//all doTimeStep
 		for(int i = 0; i < population.size(); ++i){
