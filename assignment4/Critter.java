@@ -51,11 +51,11 @@ public abstract class Critter {
 	
 	private int x_coord;
 	private int y_coord;
-	//TODO for walk and run prevent already-moved critters from moving
+	//for walk and run prevent already-moved critters from moving
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
-		if(hasMoved.get(this)){
-			System.out.println("A Walk was prevented");
+		Boolean check = hasMoved.get(this);
+		if((check != null) && check){
 			return;
 		}
 		hasMoved.put(this, true);
@@ -106,7 +106,8 @@ public abstract class Critter {
 	protected final void run(int direction) {
 		energy -= Params.run_energy_cost;
 		//prevent multiple movements in a timestep
-		if(hasMoved.get(this)){
+		Boolean check = hasMoved.get(this);
+		if((check != null) && check){
 			return;
 		}
 		hasMoved.put(this, true);
