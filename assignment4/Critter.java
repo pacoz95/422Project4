@@ -56,7 +56,7 @@ public abstract class Critter {
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
 		Boolean check = hasMoved.get(this);
-		if((check != null) && check){
+		if(((check != null) && check) || energy <= 0){
 			return;
 		}
 		hasMoved.put(this, true);
@@ -108,7 +108,7 @@ public abstract class Critter {
 		energy -= Params.run_energy_cost;
 		//prevent multiple movements in a timestep
 		Boolean check = hasMoved.get(this);
-		if((check != null) && check){
+		if(((check != null) && check) || energy <= 0){
 			return;
 		}
 		hasMoved.put(this, true);
@@ -422,8 +422,8 @@ public abstract class Critter {
 				}
 			}
 		}
-		Iterator<Critter> it = population.iterator();
 		
+		Iterator<Critter> it = population.iterator();
 		//cull dead critters
 		while(it.hasNext()){
 			Critter crit = it.next();
