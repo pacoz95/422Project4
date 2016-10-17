@@ -1,4 +1,4 @@
-/* CRITTERS <Critter3.java>
+/* CRITTERS Critter3.java
  * EE422C Project 4 submission by
  * Paul Cozzi
  * pac2472
@@ -35,7 +35,7 @@ public class Critter3 extends Critter {
 		
 	}
 	/**
-	 * will fight anything but Critter3
+	 * will fight anything but itself
 	 * @param none
 	 * @return true if critter3, false otherwise
 	 */
@@ -49,6 +49,11 @@ public class Critter3 extends Critter {
 		return true;
 	}
 	
+	/**
+	 * returns "4"
+	 * @param none
+	 * @return 4 as a string
+	 */
 	@Override
 	public String toString(){
 		return "3";

@@ -269,14 +269,17 @@ public abstract class Critter {
 	static abstract class TestCritter extends Critter {
 		protected void setEnergy(int new_energy_value) {
 			super.energy = new_energy_value;
+			updateWorldGrid();
 		}
 		
 		protected void setX_coord(int new_x_coord) {
 			super.x_coord = new_x_coord;
+			updateWorldGrid();
 		}
 		
 		protected void setY_coord(int new_y_coord) {
 			super.y_coord = new_y_coord;
+			updateWorldGrid();
 		}
 		
 		protected int getX_coord() {
@@ -522,7 +525,6 @@ public abstract class Critter {
 				it.remove();
 			}
 		}
-		isFighting = false;
 		//Update world array with new positions
 		clearWorldGrid();
 		for (int i = 0; i < population.size(); i++) {
