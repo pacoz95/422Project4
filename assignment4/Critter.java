@@ -12,6 +12,7 @@
  */
 package assignment4;
 
+import java.util.Iterator;
 import java.util.List;
 
 /* see the PDF for descriptions of the methods and fields in this class
@@ -360,7 +361,6 @@ public abstract class Critter {
 		for(int i = 0; i < population.size(); ++i){
 			Critter critter1 = population.get(i);
 			if(critter1.energy <= 0){
-				population.remove(i);
 				continue;
 			}
 			int x = critter1.x_coord;
@@ -420,6 +420,15 @@ public abstract class Critter {
 				else{
 					worldEncounters[critter2.x_coord][critter2.y_coord] -= 1;
 				}
+			}
+		}
+		Iterator<Critter> it = population.iterator();
+		
+		//cull dead critters
+		while(it.hasNext()){
+			Critter crit = it.next();
+			if(crit.energy <= 0){
+				it.remove();
 			}
 		}
 		isFighting = false;
@@ -503,10 +512,16 @@ public abstract class Critter {
 	
 	private static void updateWorldGrid() {
 		//Remove dead critters from population
-		for (int i = 0; i < population.size(); i++) {
-			if (population.get(i).energy <= 0)
-				population.remove(i);
+		Iterator<Critter> it = population.iterator();
+		
+		//cull dead critters
+		while(it.hasNext()){
+			Critter crit = it.next();
+			if(crit.energy <= 0){
+				it.remove();
+			}
 		}
+		isFighting = false;
 		//Update world array with new positions
 		clearWorldGrid();
 		for (int i = 0; i < population.size(); i++) {
