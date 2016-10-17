@@ -194,10 +194,10 @@ public abstract class Critter {
 			newCritter = (Critter) Class.forName(myPackage + "." + critter_class_name).newInstance();
 		}
 		catch (Throwable e) {
-			throw new InvalidCritterException(critter_class_name + " does not exist.");
+			throw new InvalidCritterException(critter_class_name);
 		}
 		if (!(newCritter instanceof Critter)) {
-			throw new InvalidCritterException(critter_class_name + " is not a Critter.");
+			throw new InvalidCritterException(critter_class_name);
 		}
 		//set coordinates
 		newCritter.x_coord = getRandomInt(Params.world_width);
@@ -224,7 +224,7 @@ public abstract class Critter {
 						result.add(population.get(i));
 			}
 			catch (Throwable e) {
-				throw new InvalidCritterException("something went wrong");
+				throw new InvalidCritterException(critter_class_name);
 			}
 		}
 		return result;
@@ -505,7 +505,6 @@ public abstract class Critter {
 				makeCritter("Algae");
 			}
 			catch (InvalidCritterException e) {
-				System.out.println("Cannot add Algae.");
 			}
 		}
 	}
