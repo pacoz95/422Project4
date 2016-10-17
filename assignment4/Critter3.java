@@ -18,14 +18,14 @@ package assignment4;
  */
 
 public class Critter3 extends Critter {
-	private int reproduceLimit = Params.min_reproduce_energy;
+	private int reproduceLimit = Params.min_reproduce_energy * 5;
 	@Override
 	public void doTimeStep() {
 		//want to be a good fighter, reproduce in timestep only if over the limit
 		if(getEnergy() >= reproduceLimit){
 			Critter3 baby = new Critter3();
 			baby.reproduceLimit = reproduceLimit + getRandomInt(11) - 5; //mutate the reproduce limit
-			this.reproduce(baby, getRandomInt(8));
+			this.reproduce(baby, Critter.getRandomInt(8));
 		}
 		
 	}
@@ -34,7 +34,8 @@ public class Critter3 extends Critter {
 	public boolean fight(String oponent) {
 		//Critter3 is a fighter
 		if(oponent.equals("3")){
-			walk(getRandomInt(8));
+			walk(Critter.getRandomInt(8));
+			return false;
 		}
 		return true;
 	}
