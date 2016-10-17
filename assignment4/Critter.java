@@ -51,7 +51,11 @@ public abstract class Critter {
 	
 	private int x_coord;
 	private int y_coord;
-	//for walk and run prevent already-moved critters from moving
+	
+	/*
+	 * Makes a critter move one spot if it has enough energy and the spot is not occupied
+	 * @param direction is the direction in which the critter will walk in relation to its current position
+	 */
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
 		Boolean check = hasMoved.get(this);
@@ -101,6 +105,10 @@ public abstract class Critter {
 		
 	}
 	
+	/*
+	 * Makes a critter move two spots if it has enough energy and the spot is not occupied
+	 *  @param direction is the direction in which the critter will walk in relation to its current position
+	 */
 	protected final void run(int direction) {
 		energy -= Params.run_energy_cost;
 		//prevent multiple movements in a timestep
@@ -152,6 +160,11 @@ public abstract class Critter {
 		
 	}
 	
+	/*
+	 * Creates a baby critter if parent critter has enough energy
+	 * @param offspring is the new baby critter
+	 * @param direction is the direction that the baby will be placed adjacent to the parent
+	 */
 	protected final void reproduce(Critter offspring, int direction) {
 		//Check if parents has minimum reproduce energy
 		if (this.energy < Params.min_reproduce_energy) {
@@ -440,6 +453,9 @@ public abstract class Critter {
 	}
 	
 	
+	/*
+	 * Controls how the entire world acts in each time step
+	 */
 	public static void worldTimeStep() {
 		updateWorldGrid(); //This is to keep track of where collisions in the world are
 		hasMoved.clear();
@@ -504,6 +520,9 @@ public abstract class Critter {
 		System.out.println('+');
 	}
 	
+	/*
+	 * Adds the refresh_algae_count for each time step
+	 */
 	private static void addAlgae() {
 		for (int i=0; i<Params.refresh_algae_count; i++) {
 			try {
@@ -514,6 +533,9 @@ public abstract class Critter {
 		}
 	}
 	
+	/*
+	 * Removes all dead critters from world grid and updates based on all other time steps
+	 */
 	private static void updateWorldGrid() {
 		//Remove dead critters from population
 		Iterator<Critter> it = population.iterator();
