@@ -25,6 +25,7 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 	private static Critter[][] world = new Critter[Params.world_width][Params.world_height];
+	private static int[][] worldEncounters = new int[Params.world_width][Params.world_height]; //used to tall where critters exist in the world during encounters
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
 		myPackage = Critter.class.getPackage().toString().split(" ")[1];
@@ -48,68 +49,91 @@ public abstract class Critter {
 	
 	private int x_coord;
 	private int y_coord;
-	
+	//TODO for walk and run prevent already-moved critters from moving
 	protected final void walk(int direction) {
+		energy -= Params.walk_energy_cost;
+		int x = x_coord;
+		int y = y_coord;
 		switch (direction){
-		case 0: x_coord++;
+		case 0: x++;
 			break;
-		case 1: x_coord++; y_coord--;
+		case 1: x++; y--;
 			break;
-		case 2: y_coord--;
+		case 2: y--;
 			break;
-		case 3: x_coord--; y_coord--;
+		case 3: x--; y--;
 			break;
-		case 4: x_coord--;
+		case 4: x--;
 			break;
-		case 5: x_coord--; y_coord++;
+		case 5: x--; y++;
 			break;
-		case 6: y_coord++;
+		case 6: y++;
 			break;
-		case 7: x_coord++; y_coord++;
+		case 7: x++; y++;
 			break;
 		}
-		if(x_coord < 0){
-			x_coord = Params.world_width - 1;
+		
+		//update encounters grid
+		worldEncounters[x_coord][y_coord] -= 1;
+		if(x < 0){
+			x_coord = Params.world_width + x;
 		}
-		if(y_coord < 0){
-			y_coord = Params.world_height - 1;
+		else{
+			x_coord = x;
+		}
+		if(y < 0){
+			y_coord = Params.world_height + y;
+		}
+		else{
+			y_coord = y;
 		}
 		x_coord %= Params.world_width;
 		y_coord %= Params.world_height;
-		energy -= Params.walk_energy_cost;
+		worldEncounters[x_coord][y_coord] += 1;
 		
 	}
 	
 	protected final void run(int direction) {
+		energy -= Params.run_energy_cost;
+		int x = x_coord;
+		int y = y_coord;
 		switch (direction){
-		case 0: x_coord+=2;
+		case 0: x+=2;
 			break;
-		case 1: x_coord+=2; y_coord-=2;
+		case 1: x+=2; y-=2;
 			break;
-		case 2: y_coord-=2;
+		case 2: y-=2;
 			break;
-		case 3: x_coord-=2; y_coord-=2;
+		case 3: x-=2; y-=2;
 			break;
-		case 4: x_coord-=2;
+		case 4: x-=2;
 			break;
-		case 5: x_coord-=2; y_coord+=2;
+		case 5: x-=2; y+=2;
 			break;
-		case 6: y_coord+=2;
+		case 6: y+=2;
 			break;
-		case 7: x_coord+=2; y_coord+=2;
+		case 7: x+=2; y+=2;
 			break;
 		}
+		
+		//update encounters grid because the motion is possible
+		worldEncounters[x_coord][y_coord] -= 1;
 		if(x_coord < 0){
-			x_coord = Params.world_width + x_coord;
+			x_coord = Params.world_width + x;
+		}
+		else{
+			x_coord = x;
 		}
 		if(y_coord < 0){
-			y_coord = Params.world_height + y_coord;
+			y_coord = Params.world_height + y;
 		}
-		
+		else{
+			y_coord = y;
+		}
 		x_coord %= Params.world_width;
 		y_coord %= Params.world_height;
+		worldEncounters[x_coord][y_coord] += 1;
 		
-		energy -= Params.run_energy_cost;
 	}
 	
 	protected final void reproduce(Critter offspring, int direction) {
@@ -174,14 +198,13 @@ public abstract class Critter {
 	 */
 	public static List<Critter> getInstances(String critter_class_name) throws InvalidCritterException {
 		List<Critter> result = new java.util.ArrayList<Critter>();
-		//TODO implement this function
 		for (int i = 0; i < population.size(); i++) {
 			try {
 				if (Class.forName(myPackage + "." + critter_class_name).isInstance(population.get(i)))
 						result.add(population.get(i));
 			}
-			catch (Exception e) {
-				throw new InvalidCritterException(critter_class_name + " is not a critter.");
+			catch (Throwable e) {
+				throw new InvalidCritterException("something went wrong");
 			}
 		}
 		return result;
@@ -288,6 +311,18 @@ public abstract class Critter {
 			}
 		}
 	}
+	/**
+	 * Set the world encounters grid (keeps track of how many critters are in each spot)
+	 */
+	private static void setWorldEncounters(){
+		worldEncounters = new int[Params.world_width][Params.world_height];
+		for(int i = 0; i < population.size(); ++i){
+			Critter temp = population.get(i);
+			if(temp.energy > 0){
+				worldEncounters[temp.x_coord][temp.y_coord] += 1;
+			}
+		}
+	}
 	/** 
 	 * doEncounters
 	 * using population, utilizes the world grid to resolve all encounters
@@ -296,7 +331,7 @@ public abstract class Critter {
 	 * @return none
 	 */
 	private static void doEncounters(){
-		
+		setWorldEncounters();
 		clearWorldGrid(); //start fresh
 		for(int i = 0; i < population.size(); ++i){
 			Critter critter1 = population.get(i);
@@ -306,7 +341,7 @@ public abstract class Critter {
 			}
 			int x = critter1.x_coord;
 			int y = critter1.y_coord;
-			if(world[x][y] == null || world[x][y].energy == 0){	//no encounter
+			if(world[x][y] == null || world[x][y].energy <= 0){	//no encounter
 				world[x][y] = critter1;
 			}
 			else{	//already occupied
@@ -314,20 +349,18 @@ public abstract class Critter {
 				boolean is1Fight = critter1.fight(critter2.toString());
 				boolean is2Fight = critter2.fight(critter1.toString());
 				//check if they ran
-				
-				//correct for if they ran to the same position
-				if(critter2.x_coord != x || critter2.y_coord != y){ //TODO, fix bug caused by clearing grid
-					//critter2 ran, it gets the new location, critter1 cannot run there
-					if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
-						critter1.x_coord = x;
-						critter1.y_coord = y;
-					}
-				}
-				//if they're still in the same position, see how they fight
-				if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
+				//correct for if they ran to the same position (obsolete, run and walk keep track of this, and the fight method prevent going into occupied territory)
+//				if((critter2.x_coord != x || critter2.y_coord != y) && critter2.energy > 0){ //fixed bug caused by clearing grid
+//				//critter2 ran, it gets the new location, critter1 cannot run there
+//					if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord){
+//						critter1.x_coord = x;
+//						critter1.y_coord = y;
+//					}
+//				}
+				//if they're still in the same position, and neither has died, see how they fight
+				    if(critter1.x_coord == critter2.x_coord && critter1.y_coord == critter2.y_coord && critter1.energy > 0 && critter2.energy > 0){
 					int diceRoll1;
 					int diceRoll2;
-					
 					if(!is1Fight){
 						diceRoll1 = 0;
 					}
@@ -354,8 +387,14 @@ public abstract class Critter {
 				if(critter1.energy > 0){
 					world[critter1.x_coord][critter1.y_coord] = critter1;
 				}
+				else{
+					worldEncounters[critter1.x_coord][critter1.y_coord] -= 1;
+				}
 				if(critter2.energy > 0){
 					world[critter2.x_coord][critter2.y_coord] = critter2;
+				}
+				else{
+					worldEncounters[critter2.x_coord][critter2.y_coord] -= 1;
 				}
 			}
 		}
@@ -363,6 +402,7 @@ public abstract class Critter {
 	
 	
 	public static void worldTimeStep() {
+		updateWorldGrid(); //This is to keep track of where collisions in the world are
 		//all doTimeStep
 		for(int i = 0; i < population.size(); ++i){
 			population.get(i).doTimeStep();
@@ -394,6 +434,7 @@ public abstract class Critter {
 	 * @return none
 	 */
 	public static void displayWorld() {
+		updateWorldGrid();
 		//top row
 		System.out.print('+');
 		for(int x = 0; x < Params.world_width; ++x){
@@ -444,5 +485,6 @@ public abstract class Critter {
 		for (int i = 0; i < population.size(); i++) {
 			world[population.get(i).x_coord][population.get(i).y_coord] = population.get(i);
 		}
+		setWorldEncounters();
 	}
 }
