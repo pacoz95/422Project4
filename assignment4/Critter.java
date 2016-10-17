@@ -80,26 +80,24 @@ public abstract class Critter {
 		case 7: x++; y++;
 			break;
 		}
+		//wrap around
+		if(x < 0){
+			x = Params.world_width + x;
+		}
+		if(y < 0){
+			y = Params.world_height + y;
+		}
+		x %= Params.world_width;
+		y %= Params.world_height;
+
 		//prevent walking into another critter during fights
 		if(isFighting && worldEncounters[x][y] != 0){
 			return;
 		}
 		//update encounters grid
 		worldEncounters[x_coord][y_coord] -= 1;
-		if(x < 0){
-			x_coord = Params.world_width + x;
-		}
-		else{
-			x_coord = x;
-		}
-		if(y < 0){
-			y_coord = Params.world_height + y;
-		}
-		else{
-			y_coord = y;
-		}
-		x_coord %= Params.world_width;
-		y_coord %= Params.world_height;
+		x_coord = x;
+		y_coord = y;
 		worldEncounters[x_coord][y_coord] += 1;
 		
 	}
@@ -132,26 +130,25 @@ public abstract class Critter {
 		case 7: x+=2; y+=2;
 			break;
 		}
+		//wrap around
+		if(x < 0){
+			x = Params.world_width + x;
+		}
+		if(y < 0){
+			y = Params.world_height + y;
+		}
+		
+		x %= Params.world_width;
+		y %= Params.world_height;
+
 		//prevent walking into another critter during fights
 		if(isFighting && worldEncounters[x][y] != 0){
 			return;
 		}
-		//update encounters grid because the motion is possible
+		//update encounters grid
 		worldEncounters[x_coord][y_coord] -= 1;
-		if(x_coord < 0){
-			x_coord = Params.world_width + x;
-		}
-		else{
-			x_coord = x;
-		}
-		if(y_coord < 0){
-			y_coord = Params.world_height + y;
-		}
-		else{
-			y_coord = y;
-		}
-		x_coord %= Params.world_width;
-		y_coord %= Params.world_height;
+		x_coord = x;
+		y_coord = y;
 		worldEncounters[x_coord][y_coord] += 1;
 		
 	}
@@ -167,7 +164,13 @@ public abstract class Critter {
 		//Set x and y coordinates and call walk
 		offspring.x_coord = this.x_coord;
 		offspring.y_coord = this.y_coord;
+		
+		//enable walking into other critters
+		boolean wasFighting = isFighting;
+		isFighting = false;
 		offspring.walk(direction);
+		isFighting = wasFighting;
+		//if in the fight, disable walking into other critters
 		//PUT WALK ENERGY BACK!!
 		offspring.energy += Params.walk_energy_cost;
 		//Add offspring to babies

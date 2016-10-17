@@ -10,7 +10,6 @@
  * Fall 2016
  */
 package assignment4; // cannot be in default package
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
 import java.lang.reflect.Method;
