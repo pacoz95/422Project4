@@ -27,7 +27,7 @@ public class Critter1 extends Critter{
 	@Override
 	public String toString() { return "1"; }
 	
-	/*
+	/**
 	 * Determines whether Critter1 will fight
 	 * @param opponent is the symbol of the critter that Critter1 is being asked to fight
 	 */
