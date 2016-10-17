@@ -10,7 +10,6 @@
  * Fall 2016
  */
 package assignment4; // cannot be in default package
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
 import java.lang.reflect.Method;
@@ -92,11 +91,11 @@ public class Main {
         	else if(cmd[0].equals("seed")){
         		status = handleSeed(cmd);
         	}
-        	//TODO make classname (or make classname <count>
+        	// make classname (or make classname <count>
         	else if(cmd[0].equals("make")){
         		status = handleMake(cmd);
         	}
-        	//TODO stats classname
+        	// stats classname
         	else if(cmd[0].equals("stats")){
         		status = handleStats(cmd);
         	}
@@ -163,6 +162,7 @@ public class Main {
     			}
     		}
     		catch(Exception e){
+    			e.printStackTrace();
     			return 1;
     		}
     	}
@@ -220,7 +220,7 @@ public class Main {
     	}
     	return 0;
     }
-    /**TODO
+    /**
      * handles the stats command,assumes the first argument is stats
      * @param cmd the string for the entire command that was given (including stats)
      * @return 0 if parse worked, 1 if there was a problem
@@ -229,11 +229,10 @@ public class Main {
     	if(cmd.length == 2){
     		try{
     			Critter.getInstances(cmd[1]);
-    			Method meth =  Class.forName(myPackage + "." + cmd[1]).getMethod("runStats", String.class);
+    			Method meth =  Class.forName(myPackage + "." + cmd[1]).getMethod("runStats", java.util.List.class);
     			meth.invoke(null, Critter.getInstances(cmd[1]));
     		}
-    		catch(Exception e){
-    			e.printStackTrace();
+    		catch(Throwable e){
     			return 1;
     		}
     	}
