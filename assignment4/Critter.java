@@ -333,7 +333,11 @@ public abstract class Critter {
 	 * Set the world encounters grid (keeps track of how many critters are in each spot)
 	 */
 	private static void setWorldEncounters(){
-		worldEncounters = new int[Params.world_width][Params.world_height];
+		for(int x = 0; x < Params.world_width; ++x){
+			for(int y = 0; y < Params.world_height; ++y){
+				worldEncounters[x][y] = 0;
+			}
+		}
 		for(int i = 0; i < population.size(); ++i){
 			Critter temp = population.get(i);
 			if(temp.energy > 0){
