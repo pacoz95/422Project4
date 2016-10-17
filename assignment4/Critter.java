@@ -25,6 +25,8 @@ public abstract class Critter {
 	private	static List<Critter> population = new java.util.ArrayList<Critter>();
 	private static List<Critter> babies = new java.util.ArrayList<Critter>();
 	private static Critter[][] world = new Critter[Params.world_width][Params.world_height];
+	private static java.util.HashMap<Critter, Boolean> hasMoved = new java.util.HashMap<Critter, Boolean>(); //keeps track of when critters moved
+	private static boolean isFighting = false;
 	private static int[][] worldEncounters = new int[Params.world_width][Params.world_height]; //used to tall where critters exist in the world during encounters
 	// Gets the package name.  This assumes that Critter and its subclasses are all in the same package.
 	static {
@@ -52,6 +54,11 @@ public abstract class Critter {
 	//TODO for walk and run prevent already-moved critters from moving
 	protected final void walk(int direction) {
 		energy -= Params.walk_energy_cost;
+		if(hasMoved.get(this)){
+			System.out.println("A Walk was prevented");
+			return;
+		}
+		hasMoved.put(this, true);
 		int x = x_coord;
 		int y = y_coord;
 		switch (direction){
@@ -72,7 +79,10 @@ public abstract class Critter {
 		case 7: x++; y++;
 			break;
 		}
-		
+		//prevent walking into another critter during fights
+		if(isFighting && worldEncounters[x][y] != 0){
+			return;
+		}
 		//update encounters grid
 		worldEncounters[x_coord][y_coord] -= 1;
 		if(x < 0){
@@ -95,6 +105,11 @@ public abstract class Critter {
 	
 	protected final void run(int direction) {
 		energy -= Params.run_energy_cost;
+		//prevent multiple movements in a timestep
+		if(hasMoved.get(this)){
+			return;
+		}
+		hasMoved.put(this, true);
 		int x = x_coord;
 		int y = y_coord;
 		switch (direction){
@@ -115,7 +130,10 @@ public abstract class Critter {
 		case 7: x+=2; y+=2;
 			break;
 		}
-		
+		//prevent walking into another critter during fights
+		if(isFighting && worldEncounters[x][y] != 0){
+			return;
+		}
 		//update encounters grid because the motion is possible
 		worldEncounters[x_coord][y_coord] -= 1;
 		if(x_coord < 0){
@@ -331,6 +349,7 @@ public abstract class Critter {
 	 * @return none
 	 */
 	private static void doEncounters(){
+		isFighting = true;
 		setWorldEncounters();
 		clearWorldGrid(); //start fresh
 		for(int i = 0; i < population.size(); ++i){
@@ -398,13 +417,16 @@ public abstract class Critter {
 				}
 			}
 		}
+		isFighting = false;
 	}
 	
 	
 	public static void worldTimeStep() {
 		updateWorldGrid(); //This is to keep track of where collisions in the world are
+		hasMoved.clear();
 		//all doTimeStep
 		for(int i = 0; i < population.size(); ++i){
+			hasMoved.put(population.get(i), false);
 			population.get(i).doTimeStep();
 		}
 		//do encounters
